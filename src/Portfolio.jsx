@@ -478,7 +478,7 @@ export default function Portfolio() {
           <span className="kw-word" style={{fontFamily: "'Bricolage Grotesque'", fontWeight: '600', fontSize: 'clamp(28px,5.5vw,68px)', letterSpacing: '-0.03em', lineHeight: '1', transition: 'color .4s,transform .5s cubic-bezier(.2,.7,.2,1)'}}>Analytics</span>
           <span className="kw-plus" style={{fontFamily: "'JetBrains Mono'", fontSize: '22px', color: 'var(--muted)', transition: 'transform .5s cubic-bezier(.2,.7,.2,1),color .4s'}}>+</span>
         </button>
-        <div className="kw-body" style={{maxHeight: '0', overflow: 'hidden', transition: 'max-height .6s cubic-bezier(.2,.7,.2,1)'}}><p style={{maxWidth: '620px', paddingBottom: 'clamp(20px,3vh,34px)', color: 'rgba(244,241,236,0.72)', fontSize: 'clamp(15px,1.5vw,19px)', lineHeight: '1.55'}}>Numbers are the story's editor. GA, Search Console and Power BI tell me what to keep and what to cut — so the next round is sharper than the last.</p></div>
+        <div className="kw-body" style={{maxHeight: '0', overflow: 'hidden', transition: 'max-height .6s cubic-bezier(.2,.7,.2,1)'}}><p style={{maxWidth: '620px', paddingBottom: 'clamp(20px,3vh,34px)', color: 'rgba(244,241,236,0.72)', fontSize: 'clamp(15px,1.5vw,19px)', lineHeight: '1.55'}}>Numbers are the story's editor. GA and Search Console tell me what to keep and what to cut — so the next round is sharper than the last.</p></div>
       </div>
     </div>
   </section>
@@ -579,7 +579,6 @@ export default function Portfolio() {
       <button className="pill" data-cursor="" data-skill="WordPress" data-desc="Building and structuring sites end to end — page architecture, plugin setup and publishing SEO-focused content." style={{border: '1px solid rgba(255,255,255,0.1)', borderRadius: '999px', padding: '12px 20px', fontSize: '14px', color: 'var(--muted)', background: 'rgba(255,255,255,0.04)', transition: 'transform .4s cubic-bezier(.2,.7,.2,1),background .3s,border-color .3s,color .3s'}}>WordPress</button>
       <button className="pill" data-cursor="" data-skill="LinkedIn" data-desc="Organic growth and outreach — relevance-led messaging and campaigns that drove 250+ qualified product interactions." style={{border: '1px solid rgba(255,255,255,0.1)', borderRadius: '999px', padding: '12px 20px', fontSize: '14px', color: 'var(--muted)', background: 'rgba(255,255,255,0.04)', transition: 'transform .4s cubic-bezier(.2,.7,.2,1),background .3s,border-color .3s,color .3s'}}>LinkedIn</button>
       <button className="pill" data-cursor="" data-skill="Google Analytics" data-desc="Reading behaviour, not just traffic — turning sessions, sources and funnels into decisions about what to keep and what to cut." style={{border: '1px solid rgba(255,255,255,0.1)', borderRadius: '999px', padding: '12px 20px', fontSize: '14px', color: 'var(--muted)', background: 'rgba(255,255,255,0.04)', transition: 'transform .4s cubic-bezier(.2,.7,.2,1),background .3s,border-color .3s,color .3s'}}>Google Analytics</button>
-      <button className="pill" data-cursor="" data-skill="Power BI" data-desc="Pulling marketing data into clear, shareable dashboards so a team can see what's working at a glance." style={{border: '1px solid rgba(255,255,255,0.1)', borderRadius: '999px', padding: '12px 20px', fontSize: '14px', color: 'var(--muted)', background: 'rgba(255,255,255,0.04)', transition: 'transform .4s cubic-bezier(.2,.7,.2,1),background .3s,border-color .3s,color .3s'}}>Power BI</button>
       <button className="pill" data-cursor="" data-skill="Canva" data-desc="Fast, on-brand creative for social and campaigns — turning a content plan into things people actually want to look at." style={{border: '1px solid rgba(255,255,255,0.1)', borderRadius: '999px', padding: '12px 20px', fontSize: '14px', color: 'var(--muted)', background: 'rgba(255,255,255,0.04)', transition: 'transform .4s cubic-bezier(.2,.7,.2,1),background .3s,border-color .3s,color .3s'}}>Canva</button>
       <button className="pill" data-cursor="" data-skill="Mailchimp" data-desc="Email campaigns and lead nurturing — segmented sends and sequences that keep a brand in mind without wearing out its welcome." style={{border: '1px solid rgba(255,255,255,0.1)', borderRadius: '999px', padding: '12px 20px', fontSize: '14px', color: 'var(--muted)', background: 'rgba(255,255,255,0.04)', transition: 'transform .4s cubic-bezier(.2,.7,.2,1),background .3s,border-color .3s,color .3s'}}>Mailchimp</button>
       <button className="pill" data-cursor="" data-skill="Google Ads" data-desc="Search-certified — keyword planning and campaign support aimed at intent, with an eye on what each click is really worth." style={{border: '1px solid rgba(255,255,255,0.1)', borderRadius: '999px', padding: '12px 20px', fontSize: '14px', color: 'var(--muted)', background: 'rgba(255,255,255,0.04)', transition: 'transform .4s cubic-bezier(.2,.7,.2,1),background .3s,border-color .3s,color .3s'}}>Google Ads</button>
@@ -644,34 +643,7 @@ export default function Portfolio() {
       </div>
 
       <div data-reveal="" style={{opacity: '0', transform: 'translateY(34px)', transition: 'opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)', display: 'grid', gridTemplateColumns: '56px 1fr', gap: '20px', padding: 'clamp(24px,3.2vh,36px) 0', borderTop: '1px solid var(--line)'}}>
-        <span style={{fontFamily: "'JetBrains Mono'", fontSize: '13px', color: 'var(--pink)'}}>04</span>
-        <div>
-          <div style={{display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '12px', marginBottom: '10px'}}>
-            <h3 style={{fontFamily: "'Bricolage Grotesque'", fontWeight: '700', fontSize: 'clamp(20px,2.6vw,28px)', letterSpacing: '-0.02em'}}>Webinar Activation</h3>
-            <span style={{border: '1px solid var(--line)', borderRadius: '999px', padding: '6px 14px', fontFamily: "'JetBrains Mono'", fontSize: '12px', color: 'var(--pink)'}}>200–300 participants</span>
-          </div>
-          <p style={{color: 'rgba(244,241,236,0.78)', fontSize: '15.5px', lineHeight: '1.6', maxWidth: '660px'}}>The webinar was the campaign's centerpiece — a live touchpoint where students could engage directly rather than just view a post. It built momentum and awareness that carried into the referral phase that followed.</p>
-        </div>
-      </div>
-
-      <div data-reveal="" style={{opacity: '0', transform: 'translateY(34px)', transition: 'opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)', display: 'grid', gridTemplateColumns: '56px 1fr', gap: '20px', padding: 'clamp(24px,3.2vh,36px) 0', borderTop: '1px solid var(--line)'}}>
-        <span style={{fontFamily: "'JetBrains Mono'", fontSize: '13px', color: 'var(--pink)'}}>05</span>
-        <div>
-          <h3 style={{fontFamily: "'Bricolage Grotesque'", fontWeight: '700', fontSize: 'clamp(20px,2.6vw,28px)', letterSpacing: '-0.02em', marginBottom: '10px'}}>Referral Marketing</h3>
-          <p style={{color: 'rgba(244,241,236,0.78)', fontSize: '15.5px', lineHeight: '1.6', maxWidth: '660px'}}>Existing participants were encouraged to bring other students into the campaign — turning peer-to-peer advocacy into an acquisition channel instead of relying only on outbound promotion.</p>
-        </div>
-      </div>
-
-      <div data-reveal="" style={{opacity: '0', transform: 'translateY(34px)', transition: 'opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)', display: 'grid', gridTemplateColumns: '56px 1fr', gap: '20px', padding: 'clamp(24px,3.2vh,36px) 0', borderTop: '1px solid var(--line)'}}>
-        <span style={{fontFamily: "'JetBrains Mono'", fontSize: '13px', color: 'var(--pink)'}}>06</span>
-        <div>
-          <h3 style={{fontFamily: "'Bricolage Grotesque'", fontWeight: '700', fontSize: 'clamp(20px,2.6vw,28px)', letterSpacing: '-0.02em', marginBottom: '10px'}}>Student Ambassador Program</h3>
-          <p style={{color: 'rgba(244,241,236,0.78)', fontSize: '15.5px', lineHeight: '1.6', maxWidth: '660px'}}>Selected student ambassadors carried the campaign directly into their own student communities — a community-led growth tactic, not a simple "students promoted it" footnote. They gave the campaign a trusted, peer-level voice standard promotion can't reach.</p>
-        </div>
-      </div>
-
-      <div data-reveal="" style={{opacity: '0', transform: 'translateY(34px)', transition: 'opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)', display: 'grid', gridTemplateColumns: '56px 1fr', gap: '20px', padding: 'clamp(24px,3.2vh,36px) 0', borderTop: '1px solid var(--line)'}}>
-        <span style={{fontFamily: "'JetBrains Mono'", fontSize: '13px', color: 'var(--green)'}}>07</span>
+        <span style={{fontFamily: "'JetBrains Mono'", fontSize: '13px', color: 'var(--green)'}}>04</span>
         <div>
           <h3 style={{fontFamily: "'Bricolage Grotesque'", fontWeight: '700', fontSize: 'clamp(20px,2.6vw,28px)', letterSpacing: '-0.02em', marginBottom: '14px'}}>Campaign Execution</h3>
           <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,180px),1fr))', gap: '12px'}}>
@@ -685,7 +657,7 @@ export default function Portfolio() {
       </div>
 
       <div data-reveal="" style={{opacity: '0', transform: 'translateY(34px)', transition: 'opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)', display: 'grid', gridTemplateColumns: '56px 1fr', gap: '20px', padding: 'clamp(30px,4vh,44px) 0', borderTop: '1px solid var(--line)', borderBottom: '1px solid var(--line)'}}>
-        <span style={{fontFamily: "'JetBrains Mono'", fontSize: '13px', color: 'var(--green)'}}>08</span>
+        <span style={{fontFamily: "'JetBrains Mono'", fontSize: '13px', color: 'var(--green)'}}>05</span>
         <div>
           <h3 style={{fontFamily: "'Bricolage Grotesque'", fontWeight: '700', fontSize: 'clamp(20px,2.6vw,28px)', letterSpacing: '-0.02em', marginBottom: '20px'}}>Results</h3>
           <div style={{display: 'flex', flexWrap: 'wrap', gap: 'clamp(28px,5vw,64px)', alignItems: 'flex-end'}}>
@@ -699,7 +671,7 @@ export default function Portfolio() {
 
       <div data-reveal="" style={{opacity: '0', transform: 'translateY(34px)', transition: 'opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)', paddingTop: 'clamp(30px,4vh,44px)'}}>
         <div style={{display: 'flex', alignItems: 'baseline', gap: '14px', marginBottom: '16px'}}>
-          <span style={{fontFamily: "'JetBrains Mono'", fontSize: '13px', color: 'var(--muted)'}}>09</span>
+          <span style={{fontFamily: "'JetBrains Mono'", fontSize: '13px', color: 'var(--muted)'}}>06</span>
           <h3 style={{fontFamily: "'Bricolage Grotesque'", fontWeight: '700', fontSize: 'clamp(20px,2.6vw,28px)', letterSpacing: '-0.02em'}}>What I Learned</h3>
         </div>
         <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,260px),1fr))', gap: '14px'}}>
