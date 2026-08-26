@@ -83,3 +83,20 @@ button {
   border: none;
   cursor: pointer;
 }
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid oklch(0.83 0.13 66);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+.reel-row::-webkit-scrollbar {
+  height: 0;
+}
+@media (max-width: 640px) {
+  .nav-links {
+    display: none !important;
+  }
+  .nav-hamburger {
+    display: flex !important;
+  }
+}
