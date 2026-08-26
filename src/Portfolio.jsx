@@ -236,7 +236,11 @@ export default function Portfolio() {
               <p style={{color: 'var(--muted)', marginTop: '6px', fontSize: '15px'}}>{stop.role}</p>
               <div style={{display: 'flex', flexWrap: 'wrap', gap: '10px', paddingTop: '22px'}}>
                 {stop.tags.map((tag) => (
-                  <span key={tag} style={{border: '1px solid var(--line)', borderRadius: '999px', padding: '8px 15px', fontSize: '13px', color: 'rgba(244,241,236,0.82)'}}>{tag}</span>
+                  <motion.span
+                    key={tag}
+                    whileHover={reduce ? undefined : { y: -2, borderColor: 'rgba(244,241,236,0.35)', color: '#f4f1ec' }}
+                    transition={{ duration: 0.25, ease: [0.2,0.7,0.2,1] }}
+                    style={{border: '1px solid var(--line)', borderRadius: '999px', padding: '8px 15px', fontSize: '13px', color: 'rgba(244,241,236,0.82)'}}>{tag}</motion.span>
                 ))}
               </div>
             </motion.div>
@@ -312,6 +316,7 @@ export default function Portfolio() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "0px 0px -7% 0px" }}
           transition={{ duration: 0.45, ease: [0.2,0.7,0.2,1], delay: reduce ? 0 : i * 0.07 }}
+          whileHover={reduce ? undefined : { y: -2, borderColor: 'rgba(244,241,236,0.35)', color: '#f4f1ec' }}
           style={{border: '1px solid var(--line)', borderRadius: '999px', padding: '8px 15px', fontSize: '13px', color: 'rgba(244,241,236,0.82)'}}>{tag}</motion.span>
       ))}
     </div>
@@ -335,6 +340,7 @@ export default function Portfolio() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true, margin: "0px 0px -7% 0px" }}
             transition={{ duration: 0.5, ease: [0.2,0.7,0.2,1], delay: reduce ? 0 : 0.2 }}
+            whileHover={reduce ? undefined : { scale: 1.05, borderColor: 'rgba(244,241,236,0.35)' }}
             style={{display: 'inline-block', marginTop: '14px', border: '1px solid var(--line)', borderRadius: '999px', padding: '7px 15px', fontFamily: "'JetBrains Mono'", fontSize: '12px', color: 'var(--muted)'}}>Goal: 500+ registrations</motion.span>
         </div>
       </Reveal>
@@ -351,6 +357,7 @@ export default function Portfolio() {
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true, margin: "0px 0px -7% 0px" }}
                   transition={{ duration: 0.45, ease: [0.2,0.7,0.2,1], delay: reduce ? 0 : i * 0.08 }}
+                  whileHover={reduce ? undefined : { y: -2, scale: 1.04, borderColor: 'rgba(244,241,236,0.35)' }}
                   style={{border: '1px solid var(--line)', borderRadius: '999px', padding: '10px 16px', fontSize: '13.5px', whiteSpace: 'nowrap', background: 'rgba(255,255,255,0.03)'}}>{step}</motion.span>
                 <motion.span
                   initial={reduce ? false : { opacity: 0 }}
@@ -365,6 +372,7 @@ export default function Portfolio() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true, margin: "0px 0px -7% 0px" }}
               transition={{ duration: 0.45, ease: [0.2,0.7,0.2,1], delay: reduce ? 0 : 5 * 0.08 }}
+              whileHover={reduce ? undefined : { y: -2, scale: 1.04, boxShadow: '0 12px 30px -16px var(--warm)' }}
               style={{border: '1px solid var(--warm)', borderRadius: '999px', padding: '10px 16px', fontSize: '13.5px', whiteSpace: 'nowrap', color: 'var(--warm)', background: 'rgba(255,255,255,0.03)'}}>Registrations</motion.span>
           </div>
           <p style={{color: 'rgba(244,241,236,0.78)', fontSize: '15.5px', lineHeight: '1.6', maxWidth: '660px'}}>Built a multi-touch student acquisition campaign combining content promotion, webinar activation, referral marketing, and student ambassador outreach. The webinar created initial engagement, while student ambassadors and peer referrals helped extend the campaign into student communities.</p>
@@ -405,7 +413,8 @@ export default function Portfolio() {
                 initial={reduce ? false : { opacity: 0, y: 22 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "0px 0px -7% 0px" }}
-                transition={{ duration: 0.6, ease: [0.2,0.7,0.2,1], delay: reduce ? 0 : i * 0.12 }}>
+                transition={{ duration: 0.6, ease: [0.2,0.7,0.2,1], delay: reduce ? 0 : i * 0.12 }}
+                whileHover={reduce ? undefined : { y: -4 }}>
                 <p style={{fontFamily: "'JetBrains Mono'", fontSize: '11px', letterSpacing: '0.16em', textTransform: 'uppercase', color: stat.color, marginBottom: '8px'}}>{stat.label}</p>
                 {stat.node}
               </motion.div>
