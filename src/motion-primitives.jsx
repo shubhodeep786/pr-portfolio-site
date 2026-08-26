@@ -83,9 +83,10 @@ export function Counter({ target, suffix = "", style, className }) {
 
 const SPRING = { stiffness: 250, damping: 20, mass: 0.5 };
 
-export function Magnetic({ as = "a", strength = 0.3, style, className, children, ...props }) {
+export function Magnetic({ as = "a", strength = 0.3, style, className, children, icon, glow, shimmer, ...props }) {
   const reduce = useReducedMotion();
   const ref = useRef(null);
+  const [hover, setHover] = useState(false);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const ix = useMotionValue(0);
@@ -110,6 +111,7 @@ export function Magnetic({ as = "a", strength = 0.3, style, className, children,
     y.set(0);
     ix.set(0);
     iy.set(0);
+    setHover(false);
   };
 
   const Comp = motion[as];
@@ -117,17 +119,53 @@ export function Magnetic({ as = "a", strength = 0.3, style, className, children,
     <Comp
       ref={ref}
       className={className}
-      style={{ ...style, x: sx, y: sy, position: "relative" }}
+      style={{ ...style, x: sx, y: sy, position: "relative", overflow: shimmer ? "hidden" : style?.overflow }}
+      whileTap={reduce ? undefined : { scale: 0.94 }}
       onMouseMove={handleMove}
+      onMouseEnter={() => setHover(true)}
       onMouseLeave={handleLeave}
       {...props}
     >
-      <motion.span style={{ display: "inline-block", x: six, y: siy }}>{children}</motion.span>
+      {glow && (
+        <motion.span
+          aria-hidden="true"
+          initial={false}
+          animate={{ boxShadow: hover ? `0 0 26px 2px ${glow}` : `0 0 0px 0px ${glow}` }}
+          transition={{ duration: 0.35 }}
+          style={{ position: "absolute", inset: "-6px", borderRadius: "inherit", pointerEvents: "none" }}
+        />
+      )}
+      {shimmer && (
+        <motion.span
+          aria-hidden="true"
+          initial={false}
+          animate={{ backgroundPositionX: hover ? "-120%" : "120%" }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
+          style={{
+            position: "absolute", inset: 0, pointerEvents: "none",
+            background: "linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.45) 50%, transparent 70%)",
+            backgroundSize: "250% 100%",
+          }}
+        />
+      )}
+      <motion.span style={{ display: "inline-flex", alignItems: "center", position: "relative", x: six, y: siy }}>
+        {icon && (
+          <motion.span
+            initial={false}
+            animate={{ width: hover ? 16 : 0, opacity: hover ? 1 : 0, marginRight: hover ? 8 : 0 }}
+            transition={{ duration: 0.25, ease: EASE }}
+            style={{ display: "inline-flex", overflow: "hidden" }}
+          >
+            {icon}
+          </motion.span>
+        )}
+        {children}
+      </motion.span>
     </Comp>
   );
 }
 
-export function Tilt({ max = 6, style, className, children }) {
+export function Tilt({ max = 6, hoverScale = 1, glow, style, className, children }) {
   const reduce = useReducedMotion();
   const ref = useRef(null);
   const rx = useMotionValue(0);
@@ -148,11 +186,18 @@ export function Tilt({ max = 6, style, className, children }) {
     ry.set(0);
   };
 
+  const hoverAnim = {};
+  if (hoverScale !== 1) hoverAnim.scale = hoverScale;
+  if (glow) hoverAnim.boxShadow = `0 20px 50px -24px ${glow}`;
+  const hasHover = Object.keys(hoverAnim).length > 0;
+
   return (
     <motion.div
       ref={ref}
       className={className}
       style={{ ...style, rotateX: srx, rotateY: sry, transformPerspective: 900 }}
+      whileHover={hasHover ? hoverAnim : undefined}
+      transition={{ duration: 0.3, ease: EASE }}
       onMouseMove={handleMove}
       onMouseLeave={handleLeave}
     >
@@ -213,16 +258,13 @@ export function CustomCursor() {
   );
 }
 
-export function HeroLine({ text, startIndex, style }) {
+export function HeroLine({ text, startIndex, style, hoverEffect }) {
   const reduce = useReducedMotion();
-  if (reduce) {
-    return (
-      <span className="hero-line" style={{ ...style, display: "block", paddingBottom: "0.04em" }}>
-        {text}
-      </span>
-    );
-  }
-  return (
+  const content = reduce ? (
+    <span className="hero-line" style={{ ...style, display: "block", paddingBottom: "0.04em" }}>
+      {text}
+    </span>
+  ) : (
     <span className="hero-line" style={{ ...style, display: "block", overflow: "hidden", paddingBottom: "0.04em" }}>
       {[...text].map((ch, i) => {
         const delay = 0.25 + (startIndex + i) * 0.035;
@@ -243,6 +285,28 @@ export function HeroLine({ text, startIndex, style }) {
         );
       })}
     </span>
+  );
+
+  if (!hoverEffect || reduce) return content;
+
+  return (
+    <motion.span
+      style={{ display: "block" }}
+      whileHover={{ skewX: -4, scale: 1.02 }}
+      transition={{ type: "spring", stiffness: 300, damping: 15 }}
+    >
+      {content}
+    </motion.span>
+  );
+}
+
+export function NavUnderline() {
+  return (
+    <motion.span
+      variants={{ rest: { scaleX: 0 }, hover: { scaleX: 1 } }}
+      transition={{ duration: 0.25, ease: EASE }}
+      style={{ position: "absolute", left: 0, right: 0, bottom: -3, height: "1.5px", background: "currentColor", transformOrigin: "left", display: "block" }}
+    />
   );
 }
 
@@ -268,17 +332,81 @@ export function MobileNav({ open, onClose, items }) {
               key={item.href}
               href={item.href}
               onClick={onClose}
-              initial={{ opacity: 0, y: 16 }}
+              initial={{ opacity: 0, y: 16, scaleX: 0 }}
+              whileHover="hover"
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.05 * i, duration: 0.4, ease: EASE }}
               style={{
+                position: "relative",
                 fontFamily: "'Bricolage Grotesque'", fontWeight: 700,
                 fontSize: "clamp(28px,7vw,40px)", letterSpacing: "-0.02em", color: "var(--txt)",
               }}
             >
               {item.label}
+              <NavUnderline />
             </motion.a>
           ))}
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+export function Lightbox({ item, onClose }) {
+  useEffect(() => {
+    if (!item) return;
+    const onKey = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [item, onClose]);
+
+  return (
+    <AnimatePresence>
+      {item && (
+        <motion.div
+          key="lightbox"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.25 }}
+          style={{
+            position: "fixed", inset: 0, zIndex: 70, background: "rgba(9,9,9,0.92)",
+            backdropFilter: "blur(6px)", display: "flex", alignItems: "center",
+            justifyContent: "center", padding: "clamp(20px,5vw,64px)",
+          }}
+          onClick={onClose}
+        >
+          <motion.img
+            src={item.src}
+            alt={item.alt}
+            initial={{ scale: 0.92, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.95, opacity: 0 }}
+            transition={{ duration: 0.3, ease: EASE }}
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              maxWidth: "90vw", maxHeight: "85vh", objectFit: "contain",
+              borderRadius: "12px", boxShadow: "0 40px 100px -20px rgba(0,0,0,0.7)",
+            }}
+          />
+          <motion.button
+            aria-label="Close"
+            onClick={onClose}
+            whileHover={{ scale: 1.1, rotate: 90 }}
+            whileTap={{ scale: 0.9 }}
+            style={{
+              position: "absolute", top: "clamp(16px,3vh,32px)", right: "clamp(16px,3vw,32px)",
+              width: "44px", height: "44px", borderRadius: "50%",
+              border: "1px solid rgba(244,241,236,0.3)", background: "rgba(255,255,255,0.06)",
+              color: "#f4f1ec", display: "flex", alignItems: "center", justifyContent: "center",
+            }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <path d="M18 6 6 18M6 6l12 12" />
+            </svg>
+          </motion.button>
         </motion.div>
       )}
     </AnimatePresence>

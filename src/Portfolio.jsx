@@ -1,16 +1,57 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import {
   Counter,
   CustomCursor,
   HeroLine,
+  Lightbox,
   Magnetic,
   MobileNav,
+  NavUnderline,
   Reveal,
   Tilt,
   usePointerCoarse,
   useScrollNav,
 } from "./motion-primitives";
+
+const MailIcon = (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="2" y="4" width="20" height="16" rx="2" />
+    <path d="m22 6-10 7L2 6" />
+  </svg>
+);
+
+const LinkedInIcon = (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zM8.5 8h3.8v2.05h.05c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.78 2.65 4.78 6.1V23h-4v-6.8c0-1.62-.03-3.7-2.25-3.7-2.26 0-2.6 1.76-2.6 3.58V23h-4V8z" />
+  </svg>
+);
+
+const DownloadIcon = (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 3v12" />
+    <path d="m7 10 5 5 5-5" />
+    <path d="M4 21h16" />
+  </svg>
+);
+
+function NumberBadge({ n }) {
+  return (
+    <motion.span
+      initial={{ scale: 0.5, opacity: 0 }}
+      whileInView={{ scale: 1, opacity: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5, ease: [0.2, 0.7, 0.2, 1] }}
+      style={{
+        display: "inline-flex", alignItems: "center", justifyContent: "center",
+        width: "34px", height: "34px", borderRadius: "50%", flexShrink: 0,
+        border: "1px solid var(--line)", fontFamily: "'JetBrains Mono'", fontSize: "12px", color: "var(--muted)",
+      }}
+    >
+      {n}
+    </motion.span>
+  );
+}
 
 const NAV_ITEMS = [
   { href: "#journey", label: "Journey" },
@@ -35,9 +76,9 @@ const SKILLS = [
 ];
 
 const PILLARS = [
-  { title: "Product Education", desc: "Feature explainers that sell the outcome first, the interface second." },
-  { title: "Culture & Behind-the-Scenes", desc: "Office reels that make a brand feel like people, not a logo." },
-  { title: "Events & Partnerships", desc: "National-level competitions and sponsor creative built for co-branded reach." },
+  { title: "Product Education", desc: "Feature explainers that sell the outcome first, the interface second.", accent: "var(--warm)" },
+  { title: "Culture & Behind-the-Scenes", desc: "Office reels that make a brand feel like people, not a logo.", accent: "var(--pink)" },
+  { title: "Events & Partnerships", desc: "National-level competitions and sponsor creative built for co-branded reach.", accent: "var(--green)" },
 ];
 
 const SOCIAL = [
@@ -75,8 +116,10 @@ function PlayBadge() {
 export default function Portfolio() {
   const [activeSkill, setActiveSkill] = useState(SKILLS[0]);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [lightboxItem, setLightboxItem] = useState(null);
   const { hidden, scrolled } = useScrollNav();
   const coarse = usePointerCoarse();
+  const reduce = useReducedMotion();
 
   return (
 <div style={{position: 'relative', background: '#090909', color: '#f4f1ec', fontFamily: "'Space Grotesk',sans-serif", '--warm': 'oklch(0.83 0.13 66)', '--pink': 'oklch(0.8 0.14 350)', '--green': 'oklch(0.85 0.11 150)', '--txt': '#f4f1ec', '--muted': 'rgba(244,241,236,0.52)', '--line': 'rgba(244,241,236,0.1)', minHeight: '100vh', overflow: 'hidden', cursor: coarse ? 'auto' : 'none'}}>
@@ -94,26 +137,31 @@ export default function Portfolio() {
   <motion.nav
     animate={{ y: hidden ? '-130%' : '0%', background: scrolled ? 'rgba(9,9,9,0.45)' : 'rgba(9,9,9,0)', backdropFilter: scrolled ? 'blur(14px)' : 'blur(0px)' }}
     transition={{ duration: 0.5, ease: [0.2,0.7,0.2,1] }}
-    style={{position: 'fixed', top: '0', left: '0', right: '0', zIndex: '50', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '22px clamp(20px,5vw,64px)', mixBlendMode: 'difference'}}>
+    style={{position: 'fixed', top: '0', left: '0', right: '0', zIndex: mobileNavOpen ? 61 : 50, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '22px clamp(20px,5vw,64px)', mixBlendMode: 'difference'}}>
     <a href="#top" data-cursor="" style={{fontFamily: "'Bricolage Grotesque'", fontWeight: '700', fontSize: '19px', letterSpacing: '-0.02em', display: 'flex', alignItems: 'center', gap: '10px'}}>
       <span style={{display: 'inline-block', width: '11px', height: '11px', borderRadius: '50%', background: '#fff'}}></span>Payal&nbsp;Raut
     </a>
     <div className="nav-links" style={{display: 'flex', gap: 'clamp(14px,2.4vw,34px)', fontSize: '13.5px', letterSpacing: '0.01em', alignItems: 'center'}}>
       {NAV_ITEMS.map((item) => (
-        <a key={item.href} href={item.href} data-cursor="" style={{opacity: '.85'}}>{item.label}</a>
+        <motion.a key={item.href} href={item.href} data-cursor="" initial="rest" whileHover="hover" animate="rest" style={{opacity: '.85', position: 'relative'}}>
+          {item.label}
+          <NavUnderline />
+        </motion.a>
       ))}
     </div>
-    <button
+    <motion.button
       className="nav-hamburger"
-      aria-label="Open menu"
-      onClick={() => setMobileNavOpen(true)}
-      style={{display: 'none', flexDirection: 'column', gap: '5px', padding: '8px'}}>
-      <span style={{width: '20px', height: '1.5px', background: '#fff'}}></span>
-      <span style={{width: '20px', height: '1.5px', background: '#fff'}}></span>
-    </button>
+      aria-label={mobileNavOpen ? "Close menu" : "Open menu"}
+      onClick={() => setMobileNavOpen((o) => !o)}
+      whileTap={{ scale: 0.9 }}
+      style={{display: 'none', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: '5px', padding: '8px', width: '36px', height: '36px'}}>
+      <motion.span animate={{ rotate: mobileNavOpen ? 45 : 0, y: mobileNavOpen ? 3.25 : 0 }} transition={{duration: 0.25}} style={{width: '20px', height: '1.5px', background: '#fff', display: 'block'}}></motion.span>
+      <motion.span animate={{ rotate: mobileNavOpen ? -45 : 0, y: mobileNavOpen ? -3.25 : 0 }} transition={{duration: 0.25}} style={{width: '20px', height: '1.5px', background: '#fff', display: 'block'}}></motion.span>
+    </motion.button>
   </motion.nav>
 
   <MobileNav open={mobileNavOpen} onClose={() => setMobileNavOpen(false)} items={NAV_ITEMS} />
+  <Lightbox item={lightboxItem} onClose={() => setLightboxItem(null)} />
 
   <header id="top" style={{position: 'relative', zIndex: '2', minHeight: '100svh', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 clamp(20px,5vw,64px)', paddingBottom: 'clamp(64px,11vh,100px)', paddingTop: 'clamp(64px,11vh,100px)'}}>
     <div className="hero-copy" style={{position: 'relative'}}>
@@ -124,17 +172,27 @@ export default function Portfolio() {
       <h1 style={{fontFamily: "'Bricolage Grotesque'", fontWeight: '800', lineHeight: '0.88', letterSpacing: '-0.04em', fontSize: 'clamp(58px,15vw,232px)', textTransform: 'uppercase', margin: '0'}}>
         <HeroLine text="Marketing" startIndex={0} />
         <HeroLine text="that" startIndex={9} />
-        <HeroLine text="connects." startIndex={13} style={{background: 'linear-gradient(100deg,var(--warm),var(--pink) 55%,var(--green))', WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent', fontStyle: 'italic', fontFamily: "'Instrument Serif',serif", fontWeight: '400', textTransform: 'none', letterSpacing: '-0.01em'}} />
+        <HeroLine text="connects." startIndex={13} hoverEffect style={{background: 'linear-gradient(100deg,var(--warm),var(--pink) 55%,var(--green))', WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent', fontStyle: 'italic', fontFamily: "'Instrument Serif',serif", fontWeight: '400', textTransform: 'none', letterSpacing: '-0.01em'}} />
       </h1>
       <p style={{maxWidth: '560px', marginTop: 'clamp(16px,3vh,48px)', fontSize: 'clamp(15px,1.5vw,21px)', lineHeight: '1.5', color: 'rgba(244,241,236,0.78)'}}>
         Hi, I'm Payal. I enjoy building campaigns that people actually care about,
         blending strategy, content and data into work that earns attention instead of buying it.
       </p>
     </div>
-    <div style={{position: 'absolute', bottom: '34px', left: 'clamp(20px,5vw,64px)', display: 'flex', alignItems: 'center', gap: '12px', fontFamily: "'JetBrains Mono'", fontSize: '11px', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--muted)'}}>
-      <span className="scroll-dot" style={{display: 'inline-block', width: '22px', height: '34px', border: '1px solid var(--line)', borderRadius: '12px', position: 'relative'}}><span style={{position: 'absolute', top: '6px', left: '50%', transform: 'translateX(-50%)', width: '3px', height: '7px', borderRadius: '2px', background: 'var(--muted)'}}></span></span>
+    <motion.div
+      initial={reduce ? false : { opacity: 0, y: 14 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: reduce ? 0 : 1.3 }}
+      style={{position: 'absolute', bottom: '34px', left: 'clamp(20px,5vw,64px)', display: 'flex', alignItems: 'center', gap: '12px', fontFamily: "'JetBrains Mono'", fontSize: '11px', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--muted)'}}>
+      <span className="scroll-dot" style={{display: 'inline-block', width: '22px', height: '34px', border: '1px solid var(--line)', borderRadius: '12px', position: 'relative'}}>
+        <motion.span
+          animate={reduce ? undefined : { y: [0, 10, 0], opacity: [1, 0.3, 1] }}
+          transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut', delay: reduce ? 0 : 1.3 }}
+          style={{position: 'absolute', top: '6px', left: '50%', transform: 'translateX(-50%)', width: '3px', height: '7px', borderRadius: '2px', background: 'var(--muted)'}}
+        ></motion.span>
+      </span>
       Scroll to explore
-    </div>
+    </motion.div>
   </header>
 
   <div style={{position: 'relative', zIndex: '2', borderTop: '1px solid var(--line)', borderBottom: '1px solid var(--line)', overflow: 'hidden', padding: '18px 0', background: 'rgba(255,255,255,0.012)'}}>
@@ -153,8 +211,8 @@ export default function Portfolio() {
   </div>
 
   <section id="journey" style={{position: 'relative', zIndex: '2', padding: 'clamp(70px,12vh,150px) clamp(20px,5vw,64px)'}}>
-    <Reveal style={{display: 'flex', alignItems: 'baseline', gap: '16px', marginBottom: 'clamp(40px,7vh,90px)'}}>
-      <span style={{fontFamily: "'JetBrains Mono'", fontSize: '12px', color: 'var(--muted)'}}>01</span>
+    <Reveal style={{display: 'flex', alignItems: 'center', gap: '16px', marginBottom: 'clamp(40px,7vh,90px)'}}>
+      <NumberBadge n="01" />
       <h2 style={{fontFamily: "'Bricolage Grotesque'", fontWeight: '700', fontSize: 'clamp(34px,6vw,84px)', letterSpacing: '-0.03em', lineHeight: '0.95'}}>The journey</h2>
     </Reveal>
     <div style={{maxWidth: '1000px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '0'}}>
@@ -166,7 +224,11 @@ export default function Portfolio() {
       ].map((stop, i) => (
         <div key={stop.org}>
           <Reveal>
-            <div className="jcard" style={{border: '1px solid var(--line)', borderRadius: '24px', padding: 'clamp(24px,4vw,44px)', background: 'rgba(255,255,255,0.025)', backdropFilter: 'blur(14px)', transition: 'border-color .4s,background .4s'}}>
+            <motion.div
+              className="jcard"
+              whileHover={reduce ? undefined : { y: -4, boxShadow: `0 20px 50px -24px ${stop.accent}` }}
+              transition={{ duration: 0.35, ease: [0.2,0.7,0.2,1] }}
+              style={{border: '1px solid var(--line)', borderRadius: '24px', padding: 'clamp(24px,4vw,44px)', background: 'rgba(255,255,255,0.025)', backdropFilter: 'blur(14px)'}}>
               <div style={{display: 'flex', flexWrap: 'wrap', alignItems: 'baseline', justifyContent: 'space-between', gap: '8px'}}>
                 <h3 style={{fontFamily: "'Bricolage Grotesque'", fontWeight: '700', fontSize: 'clamp(24px,3.6vw,42px)', letterSpacing: '-0.02em'}}>{stop.org}</h3>
                 <span style={{fontFamily: "'JetBrains Mono'", fontSize: '12.5px', color: stop.accent}}>{stop.when}</span>
@@ -177,7 +239,7 @@ export default function Portfolio() {
                   <span key={tag} style={{border: '1px solid var(--line)', borderRadius: '999px', padding: '8px 15px', fontSize: '13px', color: 'rgba(244,241,236,0.82)'}}>{tag}</span>
                 ))}
               </div>
-            </div>
+            </motion.div>
           </Reveal>
           {i < 3 && <div style={{width: '1px', height: '40px', background: 'linear-gradient(var(--line),transparent)', margin: '0 auto'}}></div>}
         </div>
@@ -186,8 +248,8 @@ export default function Portfolio() {
   </section>
 
   <section id="skills" style={{position: 'relative', zIndex: '2', padding: 'clamp(70px,12vh,150px) clamp(20px,5vw,64px)'}}>
-    <Reveal style={{display: 'flex', alignItems: 'baseline', gap: '16px', marginBottom: 'clamp(30px,5vh,56px)'}}>
-      <span style={{fontFamily: "'JetBrains Mono'", fontSize: '12px', color: 'var(--muted)'}}>02</span>
+    <Reveal style={{display: 'flex', alignItems: 'center', gap: '16px', marginBottom: 'clamp(30px,5vh,56px)'}}>
+      <NumberBadge n="02" />
       <h2 style={{fontFamily: "'Bricolage Grotesque'", fontWeight: '700', fontSize: 'clamp(34px,6vw,84px)', letterSpacing: '-0.03em', lineHeight: '0.95'}}>The toolkit</h2>
     </Reveal>
     <Reveal style={{display: 'flex', flexWrap: 'wrap', gap: '12px', maxWidth: '1000px', marginBottom: 'clamp(28px,4vh,44px)'}}>
@@ -199,14 +261,23 @@ export default function Portfolio() {
             data-cursor=""
             onClick={() => setActiveSkill(skill)}
             whileHover={{ y: -3 }}
+            whileTap={{ scale: 0.92 }}
             style={{
+              position: 'relative', overflow: 'hidden',
               border: active ? '1px solid rgba(255,255,255,0.4)' : '1px solid rgba(255,255,255,0.1)',
               borderRadius: '999px', padding: '12px 20px', fontSize: '14px',
               color: active ? 'var(--txt)' : 'var(--muted)',
-              background: active ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.04)',
-              transition: 'background .3s,border-color .3s,color .3s',
+              background: 'rgba(255,255,255,0.04)',
+              transition: 'border-color .3s,color .3s',
             }}>
-            {skill.name}
+            {active && (
+              <motion.span
+                layoutId="active-pill"
+                transition={reduce ? { duration: 0 } : { type: 'spring', stiffness: 380, damping: 30 }}
+                style={{ position: 'absolute', inset: 0, background: 'rgba(255,255,255,0.1)', borderRadius: '999px', zIndex: 0 }}
+              />
+            )}
+            <span style={{ position: 'relative', zIndex: 1 }}>{skill.name}</span>
           </motion.button>
         );
       })}
@@ -218,16 +289,22 @@ export default function Portfolio() {
   </section>
 
   <section id="work" style={{position: 'relative', zIndex: '2', padding: 'clamp(70px,12vh,150px) clamp(20px,5vw,64px)'}}>
-    <Reveal style={{display: 'flex', alignItems: 'baseline', gap: '16px', marginBottom: 'clamp(16px,3vh,28px)'}}>
-      <span style={{fontFamily: "'JetBrains Mono'", fontSize: '12px', color: 'var(--muted)'}}>03</span>
+    <Reveal style={{display: 'flex', alignItems: 'center', gap: '16px', marginBottom: 'clamp(16px,3vh,28px)'}}>
+      <NumberBadge n="03" />
       <h2 style={{fontFamily: "'Bricolage Grotesque'", fontWeight: '700', fontSize: 'clamp(34px,6vw,84px)', letterSpacing: '-0.03em', lineHeight: '0.95'}}>The campaign</h2>
     </Reveal>
     <Reveal as="p" style={{maxWidth: '600px', color: 'var(--muted)', fontSize: '16px', marginBottom: '14px'}}>Student Engagement Campaign, a registration &amp; engagement campaign planned and run end to end.</Reveal>
-    <Reveal style={{display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: 'clamp(36px,6vh,64px)'}}>
-      {["Campaign Planning", "Webinar Promotion", "Referral Marketing", "Student Ambassador Activation", "Community Engagement"].map((tag) => (
-        <span key={tag} style={{border: '1px solid var(--line)', borderRadius: '999px', padding: '8px 15px', fontSize: '13px', color: 'rgba(244,241,236,0.82)'}}>{tag}</span>
+    <div style={{display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: 'clamp(36px,6vh,64px)'}}>
+      {["Campaign Planning", "Webinar Promotion", "Referral Marketing", "Student Ambassador Activation", "Community Engagement"].map((tag, i) => (
+        <motion.span
+          key={tag}
+          initial={reduce ? false : { opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "0px 0px -7% 0px" }}
+          transition={{ duration: 0.45, ease: [0.2,0.7,0.2,1], delay: reduce ? 0 : i * 0.07 }}
+          style={{border: '1px solid var(--line)', borderRadius: '999px', padding: '8px 15px', fontSize: '13px', color: 'rgba(244,241,236,0.82)'}}>{tag}</motion.span>
       ))}
-    </Reveal>
+    </div>
 
     <div style={{maxWidth: '1100px'}}>
       <Reveal style={{display: 'grid', gridTemplateColumns: '56px 1fr', gap: '20px', padding: 'clamp(24px,3.2vh,36px) 0', borderTop: '1px solid var(--line)'}}>
@@ -243,7 +320,12 @@ export default function Portfolio() {
         <div>
           <h3 style={{fontFamily: "'Bricolage Grotesque'", fontWeight: '700', fontSize: 'clamp(20px,2.6vw,28px)', letterSpacing: '-0.02em', marginBottom: '10px'}}>The Challenge</h3>
           <p style={{color: 'rgba(244,241,236,0.78)', fontSize: '15.5px', lineHeight: '1.6', maxWidth: '660px'}}>The target was 500+ student registrations, a number standard organic promotion alone was unlikely to reach. The campaign needed a strategy that could turn a single event into a growing, self-referring audience.</p>
-          <span style={{display: 'inline-block', marginTop: '14px', border: '1px solid var(--line)', borderRadius: '999px', padding: '7px 15px', fontFamily: "'JetBrains Mono'", fontSize: '12px', color: 'var(--muted)'}}>Goal: 500+ registrations</span>
+          <motion.span
+            initial={reduce ? false : { opacity: 0, scale: 0.85 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true, margin: "0px 0px -7% 0px" }}
+            transition={{ duration: 0.5, ease: [0.2,0.7,0.2,1], delay: reduce ? 0 : 0.2 }}
+            style={{display: 'inline-block', marginTop: '14px', border: '1px solid var(--line)', borderRadius: '999px', padding: '7px 15px', fontFamily: "'JetBrains Mono'", fontSize: '12px', color: 'var(--muted)'}}>Goal: 500+ registrations</motion.span>
         </div>
       </Reveal>
 
@@ -252,13 +334,28 @@ export default function Portfolio() {
         <div>
           <h3 style={{fontFamily: "'Bricolage Grotesque'", fontWeight: '700', fontSize: 'clamp(20px,2.6vw,28px)', letterSpacing: '-0.02em', marginBottom: '14px'}}>Campaign Strategy</h3>
           <div style={{display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '10px', marginBottom: '14px'}}>
-            {["Audience", "Content & Promotion", "Webinar", "Student Ambassadors", "Referral Marketing"].map((step) => (
+            {["Audience", "Content & Promotion", "Webinar", "Student Ambassadors", "Referral Marketing"].map((step, i) => (
               <span key={step} style={{display: 'contents'}}>
-                <span style={{border: '1px solid var(--line)', borderRadius: '999px', padding: '10px 16px', fontSize: '13.5px', whiteSpace: 'nowrap', background: 'rgba(255,255,255,0.03)'}}>{step}</span>
-                <span style={{color: 'var(--muted)'}}>→</span>
+                <motion.span
+                  initial={reduce ? false : { opacity: 0, scale: 0.85 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true, margin: "0px 0px -7% 0px" }}
+                  transition={{ duration: 0.45, ease: [0.2,0.7,0.2,1], delay: reduce ? 0 : i * 0.08 }}
+                  style={{border: '1px solid var(--line)', borderRadius: '999px', padding: '10px 16px', fontSize: '13.5px', whiteSpace: 'nowrap', background: 'rgba(255,255,255,0.03)'}}>{step}</motion.span>
+                <motion.span
+                  initial={reduce ? false : { opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true, margin: "0px 0px -7% 0px" }}
+                  transition={{ duration: 0.3, delay: reduce ? 0 : i * 0.08 + 0.15 }}
+                  style={{color: 'var(--muted)'}}>→</motion.span>
               </span>
             ))}
-            <span style={{border: '1px solid var(--warm)', borderRadius: '999px', padding: '10px 16px', fontSize: '13.5px', whiteSpace: 'nowrap', color: 'var(--warm)', background: 'rgba(255,255,255,0.03)'}}>Registrations</span>
+            <motion.span
+              initial={reduce ? false : { opacity: 0, scale: 0.85 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true, margin: "0px 0px -7% 0px" }}
+              transition={{ duration: 0.45, ease: [0.2,0.7,0.2,1], delay: reduce ? 0 : 5 * 0.08 }}
+              style={{border: '1px solid var(--warm)', borderRadius: '999px', padding: '10px 16px', fontSize: '13.5px', whiteSpace: 'nowrap', color: 'var(--warm)', background: 'rgba(255,255,255,0.03)'}}>Registrations</motion.span>
           </div>
           <p style={{color: 'rgba(244,241,236,0.78)', fontSize: '15.5px', lineHeight: '1.6', maxWidth: '660px'}}>Built a multi-touch student acquisition campaign combining content promotion, webinar activation, referral marketing, and student ambassador outreach. The webinar created initial engagement, while student ambassadors and peer referrals helped extend the campaign into student communities.</p>
         </div>
@@ -269,8 +366,15 @@ export default function Portfolio() {
         <div>
           <h3 style={{fontFamily: "'Bricolage Grotesque'", fontWeight: '700', fontSize: 'clamp(20px,2.6vw,28px)', letterSpacing: '-0.02em', marginBottom: '14px'}}>Campaign Execution</h3>
           <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,180px),1fr))', gap: '12px'}}>
-            {["Planned campaign messaging and promotional activities", "Promoted the webinar and drove student participation", "Coordinated student ambassador activation", "Used referral-led outreach to increase registrations", "Managed ongoing student/community engagement"].map((item) => (
-              <div key={item} style={{border: '1px solid var(--line)', borderRadius: '14px', padding: '16px 18px', background: 'rgba(255,255,255,0.025)'}}><p style={{fontSize: '13.5px', color: 'rgba(244,241,236,0.85)'}}>{item}</p></div>
+            {["Planned campaign messaging and promotional activities", "Promoted the webinar and drove student participation", "Coordinated student ambassador activation", "Used referral-led outreach to increase registrations", "Managed ongoing student/community engagement"].map((item, i) => (
+              <motion.div
+                key={item}
+                initial={reduce ? false : { opacity: 0, y: 18 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "0px 0px -7% 0px" }}
+                transition={{ duration: 0.55, ease: [0.2,0.7,0.2,1], delay: reduce ? 0 : i * 0.08 }}
+                whileHover={reduce ? undefined : { y: -3, borderColor: 'rgba(244,241,236,0.28)' }}
+                style={{border: '1px solid var(--line)', borderRadius: '14px', padding: '16px 18px', background: 'rgba(255,255,255,0.025)'}}><p style={{fontSize: '13.5px', color: 'rgba(244,241,236,0.85)'}}>{item}</p></motion.div>
             ))}
           </div>
         </div>
@@ -281,9 +385,21 @@ export default function Portfolio() {
         <div>
           <h3 style={{fontFamily: "'Bricolage Grotesque'", fontWeight: '700', fontSize: 'clamp(20px,2.6vw,28px)', letterSpacing: '-0.02em', marginBottom: '20px'}}>Results</h3>
           <div style={{display: 'flex', flexWrap: 'wrap', gap: 'clamp(28px,5vw,64px)', alignItems: 'flex-end'}}>
-            <div><p style={{fontFamily: "'JetBrains Mono'", fontSize: '11px', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '8px'}}>Target</p><div style={{fontFamily: "'Bricolage Grotesque'", fontWeight: '800', fontSize: 'clamp(38px,5.5vw,58px)', letterSpacing: '-0.04em', lineHeight: '1', color: 'rgba(244,241,236,0.5)'}}>500+</div></div>
-            <div><p style={{fontFamily: "'JetBrains Mono'", fontSize: '11px', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--warm)', marginBottom: '8px'}}>Achieved</p><div style={{fontFamily: "'Bricolage Grotesque'", fontWeight: '800', fontSize: 'clamp(56px,9vw,96px)', letterSpacing: '-0.04em', lineHeight: '1', background: 'linear-gradient(120deg,var(--warm),var(--pink))', WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent'}}><Counter target={750} suffix="+" /></div></div>
-            <div><p style={{fontFamily: "'JetBrains Mono'", fontSize: '11px', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--green)', marginBottom: '8px'}}>Target achievement</p><div style={{fontFamily: "'Bricolage Grotesque'", fontWeight: '800', fontSize: 'clamp(38px,5.5vw,58px)', letterSpacing: '-0.04em', lineHeight: '1', color: 'var(--green)'}}><Counter target={150} suffix="%" /></div></div>
+            {[
+              { label: 'Target', color: 'var(--muted)', node: <div style={{fontFamily: "'Bricolage Grotesque'", fontWeight: '800', fontSize: 'clamp(38px,5.5vw,58px)', letterSpacing: '-0.04em', lineHeight: '1', color: 'rgba(244,241,236,0.5)'}}>500+</div> },
+              { label: 'Achieved', color: 'var(--warm)', node: <div style={{fontFamily: "'Bricolage Grotesque'", fontWeight: '800', fontSize: 'clamp(56px,9vw,96px)', letterSpacing: '-0.04em', lineHeight: '1', background: 'linear-gradient(120deg,var(--warm),var(--pink))', WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent'}}><Counter target={750} suffix="+" /></div> },
+              { label: 'Target achievement', color: 'var(--green)', node: <div style={{fontFamily: "'Bricolage Grotesque'", fontWeight: '800', fontSize: 'clamp(38px,5.5vw,58px)', letterSpacing: '-0.04em', lineHeight: '1', color: 'var(--green)'}}><Counter target={150} suffix="%" /></div> },
+            ].map((stat, i) => (
+              <motion.div
+                key={stat.label}
+                initial={reduce ? false : { opacity: 0, y: 22 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "0px 0px -7% 0px" }}
+                transition={{ duration: 0.6, ease: [0.2,0.7,0.2,1], delay: reduce ? 0 : i * 0.12 }}>
+                <p style={{fontFamily: "'JetBrains Mono'", fontSize: '11px', letterSpacing: '0.16em', textTransform: 'uppercase', color: stat.color, marginBottom: '8px'}}>{stat.label}</p>
+                {stat.node}
+              </motion.div>
+            ))}
           </div>
           <p style={{color: 'var(--muted)', fontSize: '14px', marginTop: '20px'}}>200–300 students attended the webinar.</p>
         </div>
@@ -295,8 +411,15 @@ export default function Portfolio() {
           <h3 style={{fontFamily: "'Bricolage Grotesque'", fontWeight: '700', fontSize: 'clamp(20px,2.6vw,28px)', letterSpacing: '-0.02em'}}>What I Learned</h3>
         </div>
         <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,260px),1fr))', gap: '14px'}}>
-          {["Community-led marketing can amplify campaign reach.", "Referral mechanisms can turn existing participants into an acquisition channel.", "Webinars can work as both an engagement and a conversion touchpoint.", "Combining multiple acquisition channels can outperform relying on a single content format."].map((item) => (
-            <div key={item} style={{border: '1px solid var(--line)', borderRadius: '18px', padding: '20px 22px', background: 'rgba(255,255,255,0.025)'}}><p style={{fontSize: '14.5px', color: 'rgba(244,241,236,0.82)', lineHeight: '1.5'}}>{item}</p></div>
+          {["Community-led marketing can amplify campaign reach.", "Referral mechanisms can turn existing participants into an acquisition channel.", "Webinars can work as both an engagement and a conversion touchpoint.", "Combining multiple acquisition channels can outperform relying on a single content format."].map((item, i) => (
+            <motion.div
+              key={item}
+              initial={reduce ? false : { opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "0px 0px -7% 0px" }}
+              transition={{ duration: 0.55, ease: [0.2,0.7,0.2,1], delay: reduce ? 0 : i * 0.09 }}
+              whileHover={reduce ? undefined : { y: -3, borderColor: 'rgba(244,241,236,0.28)' }}
+              style={{border: '1px solid var(--line)', borderRadius: '18px', padding: '20px 22px', background: 'rgba(255,255,255,0.025)'}}><p style={{fontSize: '14.5px', color: 'rgba(244,241,236,0.82)', lineHeight: '1.5'}}>{item}</p></motion.div>
           ))}
         </div>
       </Reveal>
@@ -304,8 +427,8 @@ export default function Portfolio() {
   </section>
 
   <section id="social" style={{position: 'relative', zIndex: '2', padding: 'clamp(70px,12vh,150px) clamp(20px,5vw,64px)'}}>
-    <Reveal style={{display: 'flex', alignItems: 'baseline', gap: '16px', marginBottom: 'clamp(16px,3vh,28px)'}}>
-      <span style={{fontFamily: "'JetBrains Mono'", fontSize: '12px', color: 'var(--muted)'}}>04</span>
+    <Reveal style={{display: 'flex', alignItems: 'center', gap: '16px', marginBottom: 'clamp(16px,3vh,28px)'}}>
+      <NumberBadge n="04" />
       <h2 style={{fontFamily: "'Bricolage Grotesque'", fontWeight: '700', fontSize: 'clamp(34px,6vw,84px)', letterSpacing: '-0.03em', lineHeight: '0.95'}}>Social work</h2>
     </Reveal>
     <Reveal as="p" style={{maxWidth: '600px', color: 'var(--muted)', fontSize: '16px', marginBottom: 'clamp(40px,7vh,80px)'}}>Proof beyond the case study, covering the content pillars, the creative shipped, and how the reels performed.</Reveal>
@@ -314,7 +437,14 @@ export default function Portfolio() {
       <p style={{fontFamily: "'JetBrains Mono'", fontSize: '11px', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '20px'}}>Content pillars</p>
       <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,240px),1fr))', gap: '14px'}}>
         {PILLARS.map((p) => (
-          <div key={p.title} style={{border: '1px solid var(--line)', borderRadius: '18px', padding: '20px 22px', background: 'rgba(255,255,255,0.025)'}}><h4 style={{fontFamily: "'Bricolage Grotesque'", fontWeight: '600', fontSize: '17px', letterSpacing: '-0.01em', marginBottom: '6px'}}>{p.title}</h4><p style={{fontSize: '13.5px', color: 'var(--muted)', lineHeight: '1.45'}}>{p.desc}</p></div>
+          <motion.div
+            key={p.title}
+            whileHover={reduce ? undefined : { y: -4, boxShadow: `0 20px 50px -24px ${p.accent}` }}
+            transition={{ duration: 0.35, ease: [0.2,0.7,0.2,1] }}
+            style={{border: '1px solid var(--line)', borderRadius: '18px', padding: '20px 22px', background: 'rgba(255,255,255,0.025)'}}>
+            <h4 style={{fontFamily: "'Bricolage Grotesque'", fontWeight: '600', fontSize: '17px', letterSpacing: '-0.01em', marginBottom: '6px'}}>{p.title}</h4>
+            <p style={{fontSize: '13.5px', color: 'var(--muted)', lineHeight: '1.45'}}>{p.desc}</p>
+          </motion.div>
         ))}
       </div>
     </Reveal>
@@ -332,9 +462,14 @@ export default function Portfolio() {
       <h3 style={{fontFamily: "'Bricolage Grotesque'", fontWeight: '700', fontSize: 'clamp(24px,3.2vw,36px)', letterSpacing: '-0.02em', marginBottom: '28px'}}>Social creative, shipped</h3>
       <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,210px),1fr))', gap: '16px'}}>
         {SOCIAL.map((item) => (
-          <Tilt key={item.src} max={4} style={{borderRadius: '18px', overflow: 'hidden', border: '1px solid var(--line)', background: 'rgba(255,255,255,0.04)'}}>
-            <img src={item.src} alt={item.alt} loading="lazy" style={{width: '100%', display: 'block', aspectRatio: '3/4', objectFit: 'contain'}} />
-            <div style={{padding: '12px 15px'}}><p style={{fontSize: '12.5px', color: 'rgba(244,241,236,0.78)'}}>{item.caption}</p></div>
+          <Tilt key={item.src} max={4} hoverScale={1.04} style={{borderRadius: '18px', overflow: 'hidden', border: '1px solid var(--line)', background: 'rgba(255,255,255,0.04)'}}>
+            <button
+              onClick={() => setLightboxItem(item)}
+              aria-label={`View full image: ${item.caption}`}
+              style={{display: 'block', width: '100%', padding: 0, border: 'none', background: 'none', textAlign: 'left', color: 'inherit', font: 'inherit'}}>
+              <img src={item.src} alt={item.alt} loading="lazy" style={{width: '100%', display: 'block', aspectRatio: '3/4', objectFit: 'contain'}} />
+              <div style={{padding: '12px 15px'}}><p style={{fontSize: '12.5px', color: 'rgba(244,241,236,0.78)'}}>{item.caption}</p></div>
+            </button>
           </Tilt>
         ))}
       </div>
@@ -345,7 +480,7 @@ export default function Portfolio() {
       <h3 style={{fontFamily: "'Bricolage Grotesque'", fontWeight: '700', fontSize: 'clamp(24px,3.2vw,36px)', letterSpacing: '-0.02em', marginBottom: '26px'}}>Reach, not just posts</h3>
       <div className="reel-row" style={{display: 'flex', gap: '16px', overflowX: 'auto', paddingBottom: '12px', scrollSnapType: 'x mandatory', WebkitMaskImage: 'linear-gradient(to right, black 92%, transparent 100%)', maskImage: 'linear-gradient(to right, black 92%, transparent 100%)'}}>
         {REELS.map((reel) => (
-          <Tilt key={reel.src} max={5} style={{width: '148px', flexShrink: '0', scrollSnapAlign: 'start'}}>
+          <Tilt key={reel.src} max={5} hoverScale={1.06} style={{width: '148px', flexShrink: '0', scrollSnapAlign: 'start'}}>
             <div style={{borderRadius: '16px', overflow: 'hidden', border: '1px solid var(--line)', aspectRatio: '9/16', position: 'relative'}}>
               <img src={reel.src} alt={reel.alt} loading="lazy" style={{width: '100%', height: '100%', objectFit: 'cover', display: 'block'}} />
               <PlayBadge />
@@ -359,8 +494,8 @@ export default function Portfolio() {
   </section>
 
   <section style={{position: 'relative', zIndex: '2', padding: 'clamp(70px,12vh,150px) clamp(20px,5vw,64px)'}}>
-    <Reveal style={{display: 'flex', alignItems: 'baseline', gap: '16px', marginBottom: 'clamp(40px,7vh,80px)'}}>
-      <span style={{fontFamily: "'JetBrains Mono'", fontSize: '12px', color: 'var(--muted)'}}>05</span>
+    <Reveal style={{display: 'flex', alignItems: 'center', gap: '16px', marginBottom: 'clamp(40px,7vh,80px)'}}>
+      <NumberBadge n="05" />
       <h2 style={{fontFamily: "'Bricolage Grotesque'", fontWeight: '700', fontSize: 'clamp(34px,6vw,84px)', letterSpacing: '-0.03em', lineHeight: '0.95'}}>Creative notebook</h2>
     </Reveal>
     <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,290px),1fr))', gap: 'clamp(18px,2.4vw,30px)', maxWidth: '1100px'}}>
@@ -373,7 +508,7 @@ export default function Portfolio() {
         { text: "Reach is rented. Trust is owned.", bg: '#f4f1ec', color: '#15110c', rotate: '1deg' },
       ].map((note, i) => (
         <Reveal key={note.text} delay={i * 60}>
-          <Tilt style={{background: note.bg, color: note.color, borderRadius: '6px', padding: '30px 26px', minHeight: '200px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', boxShadow: '0 22px 50px -22px rgba(0,0,0,0.7)', transform: `rotate(${note.rotate})`}}>
+          <Tilt glow={note.bg} style={{background: note.bg, color: note.color, borderRadius: '6px', padding: '30px 26px', minHeight: '200px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', boxShadow: '0 22px 50px -22px rgba(0,0,0,0.7)', transform: `rotate(${note.rotate})`}}>
             <p style={{fontFamily: "'Instrument Serif',serif", fontSize: '25px', lineHeight: '1.25', fontStyle: 'italic'}}>{note.text}</p>
             <span style={{fontFamily: "'JetBrains Mono'", fontSize: '10.5px', letterSpacing: '0.1em', opacity: '0.6'}}>· note to self</span>
           </Tilt>
@@ -388,9 +523,9 @@ export default function Portfolio() {
       <h2 style={{fontFamily: "'Bricolage Grotesque'", fontWeight: '800', fontSize: 'clamp(40px,8.5vw,128px)', letterSpacing: '-0.04em', lineHeight: '0.95', maxWidth: '14ch', margin: '0 auto'}}>Let's build something <span style={{background: 'linear-gradient(110deg,var(--warm),var(--pink),var(--green))', WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent', fontFamily: "'Instrument Serif',serif", fontStyle: 'italic', fontWeight: '400'}}>memorable.</span></h2>
     </Reveal>
     <Reveal delay={120} style={{display: 'flex', flexWrap: 'wrap', gap: '16px', justifyContent: 'center', marginTop: 'clamp(40px,7vh,70px)'}}>
-      <Magnetic data-cursor="" href="https://mail.google.com/mail/?view=cm&fs=1&to=payalraut0805@gmail.com" target="_blank" rel="noopener" style={{border: '1px solid rgba(255,255,255,0.5)', borderRadius: '999px', padding: '18px 34px', fontSize: '15px', display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(10px)'}}>Email</Magnetic>
-      <Magnetic data-cursor="" href="https://linkedin.com/in/payal-raut-319645242/" target="_blank" rel="noopener" style={{border: '1px solid rgba(255,255,255,0.5)', borderRadius: '999px', padding: '18px 34px', fontSize: '15px', display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(10px)'}}>LinkedIn</Magnetic>
-      <Magnetic data-cursor="" href="/uploads/PAYAL%20RAUT%20%20RESUME.pdf" target="_blank" rel="noopener" style={{border: '1px solid transparent', borderRadius: '999px', padding: '18px 34px', fontSize: '15px', display: 'inline-flex', alignItems: 'center', gap: '10px', color: '#15110c', background: 'linear-gradient(110deg,var(--warm),var(--pink))', fontWeight: '500'}}>Résumé ↗</Magnetic>
+      <Magnetic data-cursor="" href="https://mail.google.com/mail/?view=cm&fs=1&to=payalraut0805@gmail.com" target="_blank" rel="noopener" icon={MailIcon} glow="oklch(0.8 0.14 350 / 0.45)" style={{border: '1px solid rgba(255,255,255,0.5)', borderRadius: '999px', padding: '18px 34px', fontSize: '15px', display: 'inline-flex', alignItems: 'center', background: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(10px)'}}>Email</Magnetic>
+      <Magnetic data-cursor="" href="https://linkedin.com/in/payal-raut-319645242/" target="_blank" rel="noopener" icon={LinkedInIcon} glow="oklch(0.83 0.13 66 / 0.45)" style={{border: '1px solid rgba(255,255,255,0.5)', borderRadius: '999px', padding: '18px 34px', fontSize: '15px', display: 'inline-flex', alignItems: 'center', background: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(10px)'}}>LinkedIn</Magnetic>
+      <Magnetic data-cursor="" href="/uploads/PAYAL%20RAUT%20%20RESUME.pdf" target="_blank" rel="noopener" icon={DownloadIcon} glow="oklch(0.85 0.11 150 / 0.45)" shimmer style={{border: '1px solid transparent', borderRadius: '999px', padding: '18px 34px', fontSize: '15px', display: 'inline-flex', alignItems: 'center', color: '#15110c', background: 'linear-gradient(110deg,var(--warm),var(--pink))', fontWeight: '500'}}>Résumé</Magnetic>
     </Reveal>
     <Reveal delay={220} style={{marginTop: 'clamp(60px,10vh,120px)', display: 'flex', flexWrap: 'wrap', gap: '18px', justifyContent: 'space-between', alignItems: 'center', fontFamily: "'JetBrains Mono'", fontSize: '11.5px', letterSpacing: '0.08em', color: 'var(--muted)', borderTop: '1px solid var(--line)', paddingTop: '28px'}}>
       <span>Payal Raut · Marketing &amp; Business Development Analyst</span>
