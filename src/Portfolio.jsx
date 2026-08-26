@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   Counter,
   CustomCursor,
@@ -282,9 +282,19 @@ export default function Portfolio() {
         );
       })}
     </Reveal>
-    <Reveal style={{maxWidth: '760px', border: '1px solid var(--line)', borderRadius: '24px', padding: 'clamp(24px,4vw,40px)', background: 'rgba(255,255,255,0.025)', backdropFilter: 'blur(14px)'}}>
-      <h3 style={{fontFamily: "'Bricolage Grotesque'", fontWeight: '700', fontSize: 'clamp(22px,3vw,32px)', letterSpacing: '-0.02em', marginBottom: '12px'}}>{activeSkill.name}</h3>
-      <p style={{color: 'rgba(244,241,236,0.74)', fontSize: 'clamp(15px,1.5vw,18px)', lineHeight: '1.55'}}>{activeSkill.desc}</p>
+    <Reveal style={{maxWidth: '760px', border: '1px solid var(--line)', borderRadius: '24px', padding: 'clamp(24px,4vw,40px)', background: 'rgba(255,255,255,0.025)', backdropFilter: 'blur(14px)', overflow: 'hidden'}}>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activeSkill.name}
+          initial={reduce ? false : { opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={reduce ? undefined : { opacity: 0, y: -10 }}
+          transition={{ duration: 0.35, ease: [0.2,0.7,0.2,1] }}
+        >
+          <h3 style={{fontFamily: "'Bricolage Grotesque'", fontWeight: '700', fontSize: 'clamp(22px,3vw,32px)', letterSpacing: '-0.02em', marginBottom: '12px'}}>{activeSkill.name}</h3>
+          <p style={{color: 'rgba(244,241,236,0.74)', fontSize: 'clamp(15px,1.5vw,18px)', lineHeight: '1.55'}}>{activeSkill.desc}</p>
+        </motion.div>
+      </AnimatePresence>
     </Reveal>
   </section>
 
