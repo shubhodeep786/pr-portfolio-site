@@ -264,15 +264,19 @@ export default function Portfolio() {
             key={skill.name}
             data-cursor=""
             onClick={() => setActiveSkill(skill)}
-            whileHover={{ y: -3 }}
+            initial={false}
+            animate={{
+              borderColor: active ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.1)',
+              color: active ? '#f4f1ec' : 'rgba(244,241,236,0.52)',
+            }}
+            whileHover={reduce ? undefined : { y: -3, borderColor: 'rgba(255,255,255,0.4)', color: '#f4f1ec' }}
             whileTap={{ scale: 0.92 }}
+            transition={{ duration: 0.3, ease: [0.2,0.7,0.2,1] }}
             style={{
               position: 'relative', overflow: 'hidden',
-              border: active ? '1px solid rgba(255,255,255,0.4)' : '1px solid rgba(255,255,255,0.1)',
+              border: '1px solid',
               borderRadius: '999px', padding: '12px 20px', fontSize: '14px',
-              color: active ? 'var(--txt)' : 'var(--muted)',
               background: 'rgba(255,255,255,0.04)',
-              transition: 'border-color .3s,color .3s',
             }}>
             {active && (
               <motion.span
